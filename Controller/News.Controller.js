@@ -201,7 +201,6 @@ const getSingleNews = async (req, res) => {
 const getAllNews = async (req, res) => {
   try {
     const AllNews = await NewsModel.find({}).populate(["category", "author"]);
-    console.log(AllNews);
 
     if (AllNews) {
       return res
