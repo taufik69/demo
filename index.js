@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { DbConnection } = require("../src/Database/index.js");
+const { DbConnection } = require("./Database/index.js");
 const { app } = require("./app.js");
 
 DbConnection()

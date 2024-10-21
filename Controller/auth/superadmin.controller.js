@@ -1,4 +1,4 @@
-const { ApiError } = require("../../Utils/ApiError");
+const { ApiError } = require("../../Utils/ApiError.js");
 const bcrypt = require("bcrypt");
 const Admin = require("../../Model/auth.model.js");
 const {
