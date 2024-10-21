@@ -42,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 app.use(cookieParser());
-const allroutes = require("./Routes/index.js");
+const allroutes = require("./Routes/index");
 app.use(allroutes);
 
 module.exports = { app };

@@ -201,11 +201,12 @@ const getSingleNews = async (req, res) => {
 const getAllNews = async (req, res) => {
   try {
     const AllNews = await NewsModel.find({}).populate(["category", "author"]);
+    console.log(AllNews);
 
     if (AllNews) {
       return res
         .status(200)
-        .json(new ApiResponse(200, AllNews, "All News fetched successfully"));
+        .json(new ApiResponse(200, AllNews, "All News  fetched successfully"));
     }
     return res.status(404).json(new ApiError(404, null, `All News not found`));
   } catch (error) {

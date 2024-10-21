@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { dbName } = require("../Database/index");
+const { dbName } = require("../constants");
 
 const DbConnection = async () => {
   try {
