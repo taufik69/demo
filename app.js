@@ -31,13 +31,25 @@ const app = express();
  */
 
 app.use(express.json());
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173/",
-//     credentials: true, // Allow cookies and credentials
-//   })
-// );
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "dashboard.theclimatewatch.net",
+        "test.theclimatewatch.net",
+      ];
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allow cookies and credentials
+  })
+);
+
+// app.use(cors());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 

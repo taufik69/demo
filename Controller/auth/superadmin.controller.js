@@ -1,5 +1,5 @@
+require("dotenv").config();
 const { ApiError } = require("../../Utils/ApiError.js");
-const bcrypt = require("bcrypt");
 const Admin = require("../../Model/auth.model.js");
 const {
   generateBrcypt,
@@ -54,7 +54,7 @@ const createSuperAdmin = async (req, res) => {
 
       return res
         .status(201)
-        .cookie("Token", token, { httpOnly: false, secure: false })
+        .cookie("Token", token, { httpOnly: false, secure: true })
         .json(
           new ApiResponse(
             200,
