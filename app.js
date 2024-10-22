@@ -36,10 +36,12 @@ app.use(
     origin: function (origin, callback) {
       const allowedOrigins = [
         "http://localhost:5173",
-        "dashboard.theclimatewatch.net",
-        "test.theclimatewatch.net",
+        "https://dashboard.theclimatewatch.net",
+        "https://test.theclimatewatch.net",
       ];
-      if (allowedOrigins.includes(origin)) {
+
+      // Allow requests with no origin (like Postman or curl)
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
