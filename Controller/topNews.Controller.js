@@ -1,27 +1,35 @@
+const { default: mongoose } = require("mongoose");
 const topNewsModel = require("../Model/TopNews.model.js");
-
-const PosttopNews = async () => {
+const { ApiError } = require("../Utils/ApiError.js");
+const { ApiResponse } = require("../Utils/ApiResponse.js");
+const PosttopNews = async (req, res) => {
   try {
-    const { heading, author, standTime, body } = req.body;
-    if (!heading || !author || !standTime || !body) {
+    const { id } = req.params;
+    const isExistTopNews = await topNewsModel.findOne({
+      // topNews: {
+      //   $elemMatch: { $eq: id },
+      // },
+      topNews: id,
+    });
+    if (isExistTopNews) {
       return res
         .status(401)
-        .json(new ApiError(401, null, "Missing latestNews credintial !!"));
+        .json(new ApiError(401, null, `TopNews Is Already Exist !!`));
     }
-    const uploadTopNews = await new topNewsModel({
-      heading,
-      author,
-      standTime,
-      body,
-    }).save();
-    if (uploadTopNews) {
+    // Create a new instance of the topnews model
+    const newTopNews = new topNewsModel({
+      topNews: [id],
+    });
+
+    await newTopNews.save();
+    if (newTopNews) {
       return res
-        .status(201)
-        .json(new ApiResponse(200, saveCatagory, "TopNews Upload Successfull"));
+        .status(200)
+        .json(new ApiResponse(200, newTopNews, "TopNews Create successfully!"));
     }
     return res
       .status(401)
-      .json(new ApiError(401, null, `TopNews upload Failed !!`));
+      .json(new ApiError(401, null, "TopNews Create Failed"));
   } catch (error) {
     return res.status(401).json(new ApiError(401, null, error.message));
   }

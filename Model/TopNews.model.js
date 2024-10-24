@@ -3,30 +3,12 @@ const { Schema } = mongoose;
 
 const topNewsSchema = new Schema(
   {
-    heading: {
-      type: String,
-      required: true,
-      lowercase: true,
-      trim: true,
-    },
-    author: {
-      type: String,
-      required: true,
-      lowercase: true,
-      trim: true,
-    },
-    standTime: {
-      type: String,
-      required: true,
-      lowercase: true,
-      trim: true,
-    },
-    body: {
-      type: String,
-      required: true,
-      lowercase: true,
-      trim: true,
-    },
+    topNews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "News",
+      },
+    ],
   },
   { timestamps: true }
 );
