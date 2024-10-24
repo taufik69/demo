@@ -35,4 +35,23 @@ const PosttopNews = async (req, res) => {
   }
 };
 
-module.exports = { PosttopNews };
+const GetAllTopNews = async (req, res) => {
+  try {
+    // Find the topNews document by id and populate the topNews array
+    const topNews = await topNewsModel.find({}).populate("topNews");
+
+    if (!topNews) {
+      return res
+        .status(404)
+        .json(new ApiError(404, null, "TopNews not found!"));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, topNews, "TopNews fetched successfully!"));
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, null, error.message));
+  }
+};
+
+module.exports = { PosttopNews, GetAllTopNews };
