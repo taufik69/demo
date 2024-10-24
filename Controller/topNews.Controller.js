@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const topNewsModel = require("../Model/TopNews.model.js");
+const newsModel = require("../Model/News.model.js");
 const { ApiError } = require("../Utils/ApiError.js");
 const { ApiResponse } = require("../Utils/ApiResponse.js");
 const PosttopNews = async (req, res) => {
@@ -50,7 +51,10 @@ const PosttopNews = async (req, res) => {
 const GetAllTopNews = async (req, res) => {
   try {
     // Find all topNews documents and populate the topNews array, sort by 'createdAt' in descending order
-    const topNews = await topNewsModel.find({}).populate("topNews");
+    const topNews = await topNewsModel.find({}).populate({
+      path: "topNews",
+      populate: ["author", "category"],
+    });
 
     if (!topNews || topNews?.length === 0) {
       return res
@@ -145,4 +149,33 @@ const DeleteTopNews = async (req, res) => {
   }
 };
 
-module.exports = { PosttopNews, GetAllTopNews, UpdateTopNews, DeleteTopNews };
+const GetSingleTopNews = async (req, res) => {
+  try {
+    const { id } = req.params; // The ID of the specific topNews to fetch
+
+    // Find the topNews document by ID and populate the topNews array
+    const topNewsDoc = await newsModel
+      .findOne({ _id: id }) //this id is the news id
+      .populate(["author", "category"]);
+
+    if (!topNewsDoc) {
+      return res
+        .status(404)
+        .json(new ApiError(404, null, "TopNews document not found!"));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, topNewsDoc, "TopNews fetched successfully!"));
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, null, error.message));
+  }
+};
+
+module.exports = {
+  PosttopNews,
+  GetAllTopNews,
+  UpdateTopNews,
+  DeleteTopNews,
+  GetSingleTopNews,
+};
