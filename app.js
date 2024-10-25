@@ -36,6 +36,7 @@ app.use(
     origin: function (origin, callback) {
       const allowedOrigins = [
         "http://localhost:5173",
+        "http://localhost:5174",
         "https://dashboard.theclimatewatch.net",
         "https://test.theclimatewatch.net",
       ];
