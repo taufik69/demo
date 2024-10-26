@@ -6,7 +6,7 @@ const NewsModel = require("../Model/News.model.js");
 const catagoryModel = require("../Model/catagory.model.js");
 const { ApiError } = require("../Utils/ApiError.js");
 const { ApiResponse } = require("../Utils/ApiResponse.js");
-
+// create news controller
 const CreateNewsController = async (req, res) => {
   try {
     const { HeadLine, author, StandFirst, NewsBody, category } = req.body;
