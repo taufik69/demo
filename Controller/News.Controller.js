@@ -31,6 +31,10 @@ const CreateNewsController = async (req, res) => {
         );
     }
 
+    console.log(NewsBody);
+
+    return;
+
     const uploadResult = await cloudinaryFileUpload(image[0]?.path);
     const uploadtopNewsContent = await new NewsModel({
       HeadLine,

@@ -132,7 +132,7 @@ const DeleteTopNews = async (req, res) => {
     }
 
     // Remove the ID from the array using splice
-    topNewsDoc.topNews.splice(index, 1); // Remove 1 element at the found index
+    topNewsDoc.topNews.splice(index, 1);
 
     // Save the updated document
     await topNewsDoc.save();
