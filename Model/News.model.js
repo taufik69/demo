@@ -6,7 +6,7 @@ const NewsSchema = new Schema(
     HeadLine: {
       type: String,
       required: true,
-      lowercase: true,
+
       trim: true,
     },
     author: {
@@ -16,13 +16,13 @@ const NewsSchema = new Schema(
     StandFirst: {
       type: String,
       required: true,
-      lowercase: true,
+
       trim: true,
     },
     NewsBody: {
       type: String,
       required: true,
-      lowercase: true,
+
       trim: true,
     },
     category: {

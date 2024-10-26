@@ -127,6 +127,10 @@ const getSingleCatagory = async (req, res) => {
       },
     });
 
+    // Reverse the populated News array
+    if (catagory && catagory.News) {
+      catagory.News.reverse();
+    }
     // Check if the category exists
     if (!catagory) {
       return res
