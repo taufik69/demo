@@ -6,7 +6,7 @@ const catagorySchema = new Schema(
     Title: {
       type: String,
       required: true,
-      lowercase: true,
+
       trim: true,
     },
     News: [
