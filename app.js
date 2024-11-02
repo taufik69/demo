@@ -39,6 +39,7 @@ app.use(
         "http://localhost:5174",
         "https://dashboard.theclimatewatch.net",
         "https://www.theclimatewatch.net",
+        "https://theclimatewatch.net",
         "https://test.theclimatewatch.net",
       ];
 
