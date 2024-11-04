@@ -182,10 +182,16 @@ const getSingleNews = async (req, res) => {
     const { id } = req.params;
 
     // Find the TopNews by id
-    const topNews = await NewsModel.findById(id).populate([
-      "category",
-      "author",
-    ]);
+    // const topNews = await NewsModel.findById(id).populate([
+    //   "category",
+    //   "author",
+    // ]);
+    const topNews = await NewsModel.findById(id)
+      .populate({
+        path: "category",
+        populate: "News",
+      })
+      .populate("author");
 
     if (!topNews) {
       return res
