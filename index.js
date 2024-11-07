@@ -1,6 +1,6 @@
 require("dotenv").config();
-const { DbConnection } = require("./Database/index.js");
 const { app } = require("./app.js");
+const { DbConnection } = require("./Database/index.js");
 
 DbConnection()
   .then(() => {
