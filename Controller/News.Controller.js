@@ -6,6 +6,9 @@ const NewsModel = require("../Model/News.model.js");
 const catagoryModel = require("../Model/catagory.model.js");
 const { ApiError } = require("../Utils/ApiError.js");
 const { ApiResponse } = require("../Utils/ApiResponse.js");
+const NodeCache = require("node-cache");
+const { json } = require("express");
+const myCache = new NodeCache();
 // create news controller
 const CreateNewsController = async (req, res) => {
   try {
@@ -44,7 +47,7 @@ const CreateNewsController = async (req, res) => {
       category,
       image: uploadResult?.secure_url,
     }).save();
-
+    myCache.del("News");
     res
       .status(201)
       .json(
@@ -97,6 +100,7 @@ const deleteNews = async (req, res) => {
         }
       )
       .select("-_id");
+    myCache.del("News");
     return res
       .status(201)
       .json(
@@ -163,6 +167,7 @@ const updateNewsController = async (req, res) => {
           { new: true }
         );
       }
+      myCache.del("News");
     }
 
     // Return the updated news content
@@ -210,15 +215,32 @@ const getSingleNews = async (req, res) => {
 //get all news
 const getAllNews = async (req, res) => {
   try {
-    const AllNews = (
-      await NewsModel.find({}).populate(["category", "author"])
-    ).reverse();
+    const cachedNews = myCache.get("News");
+    if (cachedNews == undefined) {
+      const AllNews = (
+        await NewsModel.find({}).populate(["category", "author"])
+      ).reverse();
+      myCache.set("News", JSON.stringify(AllNews));
 
-    if (AllNews) {
+      if (AllNews) {
+        return res
+          .status(200)
+          .json(
+            new ApiResponse(200, AllNews, "All News  fetched successfully")
+          );
+      }
+    } else {
       return res
         .status(200)
-        .json(new ApiResponse(200, AllNews, "All News  fetched successfully"));
+        .json(
+          new ApiResponse(
+            200,
+            JSON.parse(cachedNews),
+            "All News  fetched successfully (from chched)"
+          )
+        );
     }
+
     return res.status(404).json(new ApiError(404, null, `All News not found`));
   } catch (error) {
     return res.status(500).json(new ApiError(500, null, error.message));
@@ -228,9 +250,11 @@ const getAllNews = async (req, res) => {
 const getAuthorAllNews = async (req, res) => {
   try {
     const { id } = req.params;
-    const authorNews = await NewsModel.find({ author: id }).populate({
-      path: "author",
-    });
+    const authorNews = await NewsModel.find({ author: id })
+      .populate({
+        path: "author",
+      })
+      .populate("category");
     if (authorNews?.length) {
       return res
         .status(200)

@@ -1,6 +1,9 @@
+const { json } = require("express");
 const catagoryModel = require("../Model/catagory.model.js");
 const { ApiError } = require("../Utils/ApiError.js");
 const { ApiResponse } = require("../Utils/ApiResponse.js");
+const NodeCache = require("node-cache");
+const myCache = new NodeCache();
 const createCatagory = async (req, res) => {
   try {
     const { Title } = req.body;
@@ -33,14 +36,29 @@ const createCatagory = async (req, res) => {
 //get all catagory
 const GetAllCatagory = async (req, res) => {
   try {
-    const getAllCatagory = await catagoryModel.find({});
-    res
+    const cachedCategory = myCache.get("category");
+    if (cachedCategory == undefined) {
+      const getAllCatagory = await catagoryModel.find({}).populate("News");
+
+      myCache.set("category", JSON.stringify(getAllCatagory), 60 * 60);
+      return res
+        .status(201)
+        .json(
+          new ApiResponse(
+            200,
+            getAllCatagory,
+            "All  Catagory getting Successfull"
+          )
+        );
+    }
+
+    return res
       .status(201)
       .json(
         new ApiResponse(
           200,
-          getAllCatagory,
-          "All  Catagory getting Successfull"
+          JSON.parse(cachedCategory),
+          "All  Catagory getting Successfull (from chached)"
         )
       );
   } catch (error) {
@@ -118,30 +136,47 @@ const deleteCatagory = async (req, res) => {
 const getSingleCatagory = async (req, res) => {
   try {
     const { id } = req.params;
+    const getSingleCategory = myCache.get(`category${id}`);
+    if (getSingleCategory == undefined) {
+      // Find the category by ID
+      const catagory = await catagoryModel
+        .findById(id)
+        .populate({
+          path: "News",
+          populate: {
+            path: "author",
+          },
+        })
+        .lean();
 
-    // Find the category by ID
-    const catagory = await catagoryModel.findById(id).populate({
-      path: "News",
-      populate: {
-        path: "author",
-      },
-    });
+      // Reverse the populated News array
+      if (catagory && catagory.News) {
+        catagory.News.reverse();
+      }
 
-    // Reverse the populated News array
-    if (catagory && catagory.News) {
-      catagory.News.reverse();
-    }
-    // Check if the category exists
-    if (!catagory) {
+      myCache.set(`category${id}`, JSON.stringify(catagory));
+      // Check if the category exists
+      if (!catagory) {
+        return res
+          .status(404)
+          .json(new ApiError(404, null, `Category not found`));
+      }
+
+      // Return the found category
       return res
-        .status(404)
-        .json(new ApiError(404, null, `Category not found`));
+        .status(200)
+        .json(new ApiResponse(200, catagory, `Category fetched successfully`));
     }
 
-    // Return the found category
-    res
+    return res
       .status(200)
-      .json(new ApiResponse(200, catagory, `Category fetched successfully`));
+      .json(
+        new ApiResponse(
+          200,
+          JSON.parse(getSingleCategory),
+          `Category fetched successfully (from cached)`
+        )
+      );
   } catch (error) {
     return res.status(500).json(new ApiError(500, null, error.message));
   }
