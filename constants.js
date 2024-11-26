@@ -1,2 +1,2 @@
-const dbName = "Climate";
+let dbName = "Climate";
 module.exports = { dbName };
